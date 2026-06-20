@@ -3,7 +3,12 @@ from rest_framework import serializers
 
 from .models import (
     SkillTag, Profile, JobListing, ApplicationOutcome, Alumni,
+    FACULTY_CHOICES, YEAR_CHOICES, GPA_CHOICES,
 )
+
+
+def _choice_values(choices):
+    return ', '.join(value for value, _label in choices)
 
 
 class SkillTagSerializer(serializers.ModelSerializer):
@@ -22,9 +27,31 @@ class ProfileSerializer(serializers.ModelSerializer):
     user = UserSerializer(read_only=True)
     skills = SkillTagSerializer(many=True, read_only=True)
     # ProfilePage.jsx sends `skill_ids`; map it onto the `skills` M2M (write-only).
+    # Custom messages name the offending id instead of DRF's generic "object does not exist".
     skill_ids = serializers.PrimaryKeyRelatedField(
         many=True, write_only=True, required=False,
         queryset=SkillTag.objects.all(), source='skills',
+        error_messages={
+            'does_not_exist': 'Invalid skill id "{pk_value}" — no skill with that id exists.',
+            'incorrect_type': 'Skill ids must be integers; got {data_type} instead.',
+        },
+    )
+    # Explicit choice fields so a wrong value yields a clear, field-level message
+    # (listing the accepted values) rather than DRF's terse default.
+    faculty = serializers.ChoiceField(
+        choices=FACULTY_CHOICES, required=False, allow_blank=True,
+        error_messages={'invalid_choice':
+                        'Invalid faculty. Choose one of: ' + _choice_values(FACULTY_CHOICES) + '.'},
+    )
+    year_of_study = serializers.ChoiceField(
+        choices=YEAR_CHOICES, required=False, allow_blank=True,
+        error_messages={'invalid_choice':
+                        'Invalid year of study. Choose one of: ' + _choice_values(YEAR_CHOICES) + '.'},
+    )
+    gpa_range = serializers.ChoiceField(
+        choices=GPA_CHOICES, required=False, allow_blank=True,
+        error_messages={'invalid_choice':
+                        'Invalid GPA range. Choose one of: ' + _choice_values(GPA_CHOICES) + '.'},
     )
 
     class Meta:
