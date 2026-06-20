@@ -6,7 +6,7 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
 django.setup()
 
 from django.contrib.auth.models import User
-from api.models import SkillTag, JobListing, ApplicationOutcome, Profile
+from api.models import SkillTag, JobListing, ApplicationOutcome, Profile, Alumni
 
 
 def seed():
@@ -15,6 +15,7 @@ def seed():
     JobListing.objects.all().delete()
     SkillTag.objects.all().delete()
     Profile.objects.all().delete()
+    Alumni.objects.all().delete()
     User.objects.filter(is_superuser=False).delete()
 
     print("Creating skill tags...")
@@ -203,11 +204,96 @@ def seed():
     )
     print("  Created sample outcomes")
 
+    print("Creating alumni...")
+    # Matched to seeded companies by name (JobDetailSerializer filters company__iexact).
+    alumni_data = [
+        # Google
+        {
+            'name': 'Rachel Tan',
+            'linkedin_url': 'https://www.linkedin.com/in/rachel-tan-nus/',
+            'email': 'rachel.tan@alumni.nus.edu.sg',
+            'company': 'Google',
+            'current_role': 'Software Engineer, Search',
+            'graduation_year': 2022,
+            'faculty': 'SOC',
+        },
+        {
+            'name': 'Marcus Lim',
+            'linkedin_url': 'https://www.linkedin.com/in/marcus-lim-swe/',
+            'email': 'marcus.lim@alumni.nus.edu.sg',
+            'company': 'Google',
+            'current_role': 'Senior Software Engineer',
+            'graduation_year': 2019,
+            'faculty': 'SOC',
+        },
+        # Meta
+        {
+            'name': 'Priya Nair',
+            'linkedin_url': 'https://www.linkedin.com/in/priya-nair-frontend/',
+            'email': 'priya.nair@alumni.nus.edu.sg',
+            'company': 'Meta',
+            'current_role': 'Frontend Engineer, React',
+            'graduation_year': 2021,
+            'faculty': 'SOC',
+        },
+        {
+            'name': 'Daniel Wong',
+            'linkedin_url': 'https://www.linkedin.com/in/daniel-wong-meta/',
+            'email': 'daniel.wong@alumni.nus.edu.sg',
+            'company': 'Meta',
+            'current_role': 'Product Designer',
+            'graduation_year': 2020,
+            'faculty': 'ENG',
+        },
+        # Shopee
+        {
+            'name': 'Chloe Sim',
+            'linkedin_url': 'https://www.linkedin.com/in/chloe-sim-data/',
+            'email': 'chloe.sim@alumni.nus.edu.sg',
+            'company': 'Shopee',
+            'current_role': 'Data Scientist',
+            'graduation_year': 2023,
+            'faculty': 'SCI',
+        },
+        {
+            'name': 'Arjun Mehta',
+            'linkedin_url': 'https://www.linkedin.com/in/arjun-mehta-ds/',
+            'email': 'arjun.mehta@alumni.nus.edu.sg',
+            'company': 'Shopee',
+            'current_role': 'Machine Learning Engineer',
+            'graduation_year': 2021,
+            'faculty': 'SOC',
+        },
+        # Grab
+        {
+            'name': 'Nurul Aisyah',
+            'linkedin_url': 'https://www.linkedin.com/in/nurul-aisyah-grab/',
+            'email': 'nurul.aisyah@alumni.nus.edu.sg',
+            'company': 'Grab',
+            'current_role': 'Backend Engineer, Payments',
+            'graduation_year': 2022,
+            'faculty': 'SOC',
+        },
+        {
+            'name': 'Kevin Teo',
+            'linkedin_url': 'https://www.linkedin.com/in/kevin-teo-grab/',
+            'email': 'kevin.teo@alumni.nus.edu.sg',
+            'company': 'Grab',
+            'current_role': 'Engineering Manager',
+            'graduation_year': 2017,
+            'faculty': 'ENG',
+        },
+    ]
+    for ad in alumni_data:
+        Alumni.objects.create(**ad)
+    print(f"  Created {Alumni.objects.count()} alumni")
+
     print("\nSeed completed successfully!")
     print(f"  Users: {User.objects.filter(is_superuser=False).count()}")
     print(f"  Skills: {SkillTag.objects.count()}")
     print(f"  Jobs: {JobListing.objects.count()}")
     print(f"  Outcomes: {ApplicationOutcome.objects.count()}")
+    print(f"  Alumni: {Alumni.objects.count()}")
     print(f"\nDemo accounts:")
     print(f"  alice / password123 (has SWE skills)")
     print(f"  bob / password123 (has basic skills)")

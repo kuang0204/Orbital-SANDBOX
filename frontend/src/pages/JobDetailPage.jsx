@@ -34,6 +34,12 @@ export default function JobDetailPage({ user }) {
     FS: 'Full Stack', IT: 'Information Technology', BA: 'Business Analysis', OT: 'Other'
   }[job.role_type] || job.role_type
 
+  const facultyLabel = {
+    SOC: 'School of Computing', ENG: 'Faculty of Engineering', BIZ: 'NUS Business School',
+    FASS: 'Faculty of Arts and Social Sciences', SCI: 'Faculty of Science',
+    MED: 'Yong Loo Lin School of Medicine', LAW: 'Faculty of Law'
+  }
+
   return (
     <div className="max-w-3xl mx-auto">
       <Link to="/" className="inline-flex items-center gap-1 text-sm text-gray-400 hover:text-blue-600 mb-6 transition-colors">
@@ -111,6 +117,44 @@ export default function JobDetailPage({ user }) {
           )}
         </div>
       </div>
+
+      {job.alumni?.length > 0 && (
+        <div className="card p-8 mt-6">
+          <div className="flex items-center gap-2 mb-1">
+            <h2 className="text-xl font-bold">NUS Alumni at {job.company}</h2>
+            <span className="badge bg-blue-50 text-blue-700">{job.alumni.length}</span>
+          </div>
+          <p className="text-sm text-gray-500 mb-6">Connect with NUS graduates who work here.</p>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {job.alumni.map(a => (
+              <div key={a.id} className="border border-gray-100 rounded-2xl p-5 flex flex-col gap-3 hover:border-blue-200 transition-colors">
+                <div className="flex items-start gap-3">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-blue-500 to-indigo-500 flex items-center justify-center text-white font-bold shrink-0">
+                    {a.name[0]}
+                  </div>
+                  <div className="min-w-0">
+                    <p className="font-semibold text-gray-900 truncate">{a.name}</p>
+                    {a.current_role && <p className="text-sm text-gray-600 truncate">{a.current_role}</p>}
+                  </div>
+                </div>
+                <div className="flex flex-wrap gap-2 text-xs">
+                  {a.faculty && (
+                    <span className="badge bg-gray-100 text-gray-700">{facultyLabel[a.faculty] || a.faculty}</span>
+                  )}
+                  {a.graduation_year && (
+                    <span className="badge bg-purple-50 text-purple-700">Class of {a.graduation_year}</span>
+                  )}
+                </div>
+                <a href={a.linkedin_url} target="_blank" rel="noopener noreferrer"
+                  className="mt-auto inline-flex items-center justify-center gap-2 text-sm font-medium text-blue-600 hover:text-blue-700 border border-blue-200 hover:border-blue-300 rounded-xl py-2 transition-colors">
+                  <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/></svg>
+                  View LinkedIn
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {gap && (
         <div className="card p-8 mt-6">
