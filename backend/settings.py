@@ -6,29 +6,18 @@ from dotenv import load_dotenv
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# Auto-load a local .env file (gitignored) in development. In production the
-# platform (Render/Vercel) injects these as real environment variables, so the
-# absence of a .env file is expected and harmless.
 load_dotenv(BASE_DIR / '.env')
-
 
 def _env_bool(name, default):
     return os.environ.get(name, str(default)).strip().lower() in ('1', 'true', 'yes', 'on')
 
-
-# SECURITY WARNING: keep the secret key used in production secret!
-# The hardcoded fallback below is ONLY for local development convenience.
-# Production MUST provide SECRET_KEY via the environment — never deploy relying
-# on this fallback value.
 SECRET_KEY = os.environ.get(
     'SECRET_KEY',
     'django-insecure-!f6c8^j6($-9&6vy0bzqit4juth4ryw5x06fpl*t@&fd^-0gj7',
 )
 
-# Defaults to True for local dev; production MUST set DEBUG=False explicitly.
 DEBUG = _env_bool('DEBUG', True)
 
-# Comma-separated list via env, e.g. "myapp.onrender.com,localhost".
 ALLOWED_HOSTS = [
     h.strip()
     for h in os.environ.get('ALLOWED_HOSTS', 'localhost,127.0.0.1').split(',')
@@ -59,9 +48,6 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-# In development, allow any origin for convenience. In production, lock CORS
-# down to an explicit allow-list supplied via the CORS_ALLOWED_ORIGINS env var
-# (comma-separated, e.g. "https://myapp.vercel.app").
 if DEBUG:
     CORS_ALLOW_ALL_ORIGINS = True
 else:
@@ -91,9 +77,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
-# Default to local SQLite. If DATABASE_URL is set (production / Supabase /
-# Postgres), parse it and use that instead — local dev without a .env keeps
-# working unchanged.
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
